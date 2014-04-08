@@ -4,6 +4,7 @@ import by.muna.moep.post.IPost;
 import by.muna.moep.post.PostException;
 import by.muna.moep.post.cli.BadPostCLICommandException;
 import by.muna.moep.post.cli.IPostCLI;
+import by.muna.moep.post.cli.PostCLI;
 import by.muna.moep.post.data.IPostParameter;
 import by.muna.moep.post.data.IPostType;
 import by.muna.moep.post.data.IPostTypeFull;
@@ -22,9 +23,7 @@ import java.util.Map;
 
 public class BasicCLITest {
     private IPostCLI createPostCLI() {
-        // FIXME: Когда будет реализация CLI, инстанцировать его класс здесь
-        // А так же подсунуть мок-почту this.post
-        return null;
+        return new PostCLI(this.post);
     }
 
     @Test
