@@ -1,6 +1,6 @@
 package by.muna.moep.post.formula;
 
-public class FormulaRuntimeException extends Exception {
+public class FormulaRuntimeException extends FormulaException {
     public FormulaRuntimeException() {
         super();
     }
