@@ -1,6 +1,8 @@
 package by.muna.moep.post.formula.parser;
 
-public class BadFormulaSyntaxException extends Exception {
+import by.muna.moep.post.formula.FormulaException;
+
+public class BadFormulaSyntaxException extends FormulaException {
     public BadFormulaSyntaxException() {
         super();
     }
