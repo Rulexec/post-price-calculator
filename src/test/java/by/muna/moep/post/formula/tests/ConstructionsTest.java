@@ -42,7 +42,7 @@ public class ConstructionsTest {
 
         parser.feed(
             "switch $a: case 'dog': 7, case 'cat': 5," +
-            "case 'unicorn': 42, case 'wolf': 0"
+            "case 'unicorn': 42, case 'wolf': 0 end"
         );
 
         IFormulaBuilder formulaBuilder = parser.end();
