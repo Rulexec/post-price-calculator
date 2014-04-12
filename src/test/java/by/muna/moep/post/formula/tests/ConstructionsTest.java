@@ -38,40 +38,51 @@ public class ConstructionsTest {
 
     @Test
     public void switchTest() throws FormulaException {
-        IFormulaParser parser = FormulaParserFactory.createFormulaParser();
-
-        parser.feed(
-            "switch $a: case 'dog': 7, case 'cat': 5," +
-            "case 'unicorn': 42, case 'wolf': 0 end"
-        );
-
-        IFormulaBuilder formulaBuilder = parser.end();
-
-        IFormula formula = formulaBuilder.buildFormula();
-
         Map<String, IFormulaValue> args = new HashMap<>();
         args.put("a", new FormulaStringValue("unicorn"));
 
-        IFormulaValue result = formula.eval(args);
+        IFormulaValue result = this.evalFormula(
+            "switch $a: case 'dog': 7, case 'cat': 5," +
+            "case 'unicorn': 42, case 'wolf': 0 end",
+            args
+        );
 
         Assert.assertEquals(FormulaValueType.INT, result.getValueType());
+        Assert.assertEquals(42, ((FormulaIntValue) result).getValue());
+    }
+
+    @Test
+    public void scopesTest() throws FormulaException {
+        IFormulaValue result = this.evalFormula(
+            "$a = 2; $b = 5;" +
+            "$a = 8; { global $b; $a = 12; $b = 14 };" +
+            "if ($a == 8 && $b == 14) then 42 else 0",
+            Collections.emptyMap()
+        );
+
         Assert.assertEquals(42, ((FormulaIntValue) result).getValue());
     }
 
     private void testIntExpression(
         String expr, Map<String, IFormulaValue> args, int expected) throws FormulaException
     {
+        IFormulaValue result = this.evalFormula(expr, args);
+
+        Assert.assertEquals(FormulaValueType.INT, result.getValueType());
+        Assert.assertEquals(expected, ((FormulaIntValue) result).getValue());
+    }
+
+    private IFormulaValue evalFormula(String code, Map<String, IFormulaValue> args
+        ) throws FormulaException
+    {
         IFormulaParser parser = FormulaParserFactory.createFormulaParser();
 
-        parser.feed(expr);
+        parser.feed(code);
 
         IFormulaBuilder formulaBuilder = parser.end();
 
         IFormula formula = formulaBuilder.buildFormula();
 
-        IFormulaValue result = formula.eval(args);
-
-        Assert.assertEquals(FormulaValueType.INT, result.getValueType());
-        Assert.assertEquals(expected, ((FormulaIntValue) result).getValue());
+        return formula.eval(args);
     }
 }
