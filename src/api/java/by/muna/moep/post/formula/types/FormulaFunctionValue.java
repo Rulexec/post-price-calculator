@@ -15,6 +15,6 @@ public class FormulaFunctionValue implements IFormulaValue {
 
     @Override
     public FormulaValueType getValueType() {
-        return FormulaValueType.BOOLEAN;
+        return FormulaValueType.FUNCTION;
     }
 }
