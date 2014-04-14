@@ -52,18 +52,6 @@ public class ConstructionsTest {
         Assert.assertEquals(42, ((FormulaIntValue) result).getValue());
     }
 
-    @Test
-    public void scopesTest() throws FormulaException {
-        IFormulaValue result = this.evalFormula(
-            "$a = 2; $b = 5;" +
-            "$a = 8; { global $b; $a = 12; $b = 14 };" +
-            "if ($a == 8 && $b == 14) then 42 else 0",
-            Collections.emptyMap()
-        );
-
-        Assert.assertEquals(42, ((FormulaIntValue) result).getValue());
-    }
-
     private void testIntExpression(
         String expr, Map<String, IFormulaValue> args, int expected) throws FormulaException
     {
