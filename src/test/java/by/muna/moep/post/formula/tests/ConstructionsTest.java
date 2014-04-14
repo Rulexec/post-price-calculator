@@ -43,7 +43,7 @@ public class ConstructionsTest {
 
         IFormulaValue result = this.evalFormula(
             "switch $a: case 'dog': 7, case 'cat': 5," +
-            "case 'unicorn': 42, case 'wolf': 0 end",
+            "case 'unicorn': 42, case 'wolf': 0",
             args
         );
 
