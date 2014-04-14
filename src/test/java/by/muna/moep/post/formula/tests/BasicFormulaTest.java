@@ -7,6 +7,7 @@ import by.muna.moep.post.formula.IFormulaBuilder;
 import by.muna.moep.post.formula.builtin.SqrtFormula;
 import by.muna.moep.post.formula.parser.BadFormulaSyntaxException;
 import by.muna.moep.post.formula.parser.IFormulaParser;
+import by.muna.moep.post.formula.tests.factories.FormulaParserFactory;
 import by.muna.moep.post.formula.types.FormulaFloatValue;
 import by.muna.moep.post.formula.types.FormulaIntValue;
 import by.muna.moep.post.formula.types.FormulaValueType;
@@ -19,16 +20,11 @@ import java.util.Map;
 import java.util.Set;
 
 public class BasicFormulaTest {
-    private IFormulaParser createFormulaParser() {
-        // FIXME: Когда будет реализация парсера, инстанцировать его класс здесь
-        return null;
-    }
-
     @Test
     public void euclideNormTest()
         throws BadFormulaSyntaxException, BadFormulaException, FormulaRuntimeException
     {
-        IFormulaParser parser = this.createFormulaParser();
+        IFormulaParser parser = FormulaParserFactory.createFormulaParser();
 
         parser.feed("sqrt($x^2 + $y^2)");
 
