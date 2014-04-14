@@ -3,6 +3,7 @@ package by.muna.moep.post.formula.tests;
 import by.muna.moep.post.formula.FormulaException;
 import by.muna.moep.post.formula.IFormula;
 import by.muna.moep.post.formula.IFormulaBuilder;
+import by.muna.moep.post.formula.builtin.BuiltInFormulas;
 import by.muna.moep.post.formula.parser.IFormulaParser;
 import by.muna.moep.post.formula.tests.factories.FormulaParserFactory;
 import by.muna.moep.post.formula.types.FormulaIntValue;
@@ -25,13 +26,13 @@ public class ConstructionsTest {
         );
 
         this.testIntExpression(
-            "$a = true; if $a then 2 else 7", Collections.emptyMap(),
+            "$a = true; if $a then 2 else 7", new HashMap<>(),
             2
         );
 
         this.testIntExpression(
             "$a = false; $b = (if $a then false else true); if $b then 7 else 9",
-            Collections.emptyMap(),
+            new HashMap<>(),
             7
         );
     }
@@ -42,8 +43,8 @@ public class ConstructionsTest {
         args.put("a", new FormulaStringValue("unicorn"));
 
         IFormulaValue result = this.evalFormula(
-            "switch $a: case 'dog': 7, case 'cat': 5," +
-            "case 'unicorn': 42, case 'wolf': 0",
+            "switch $a: case 'dog': 7 case 'cat': 5\n" +
+            "case 'unicorn': 42 case 'wolf': 0",
             args
         );
 
@@ -80,6 +81,7 @@ public class ConstructionsTest {
         parser.feed(code);
 
         IFormulaBuilder formulaBuilder = parser.end();
+        BuiltInFormulas.inject(formulaBuilder);
 
         IFormula formula = formulaBuilder.buildFormula();
 

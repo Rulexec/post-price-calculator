@@ -1,0 +1,195 @@
+#javaImport 'java.util.List'
+#javaImport 'java.util.Arrays'
+
+#javaImport 'by.muna.moep.post.formula.model.IFormulaExpressionModel'
+#javaImport 'by.muna.moep.post.formula.model.FormulaBuiltInOperationTypeModel'
+
+#javaImport 'by.muna.moep.post.formula.model.expressions.FormulaIntModel'
+#javaImport 'by.muna.moep.post.formula.model.expressions.FormulaStringModel'
+#javaImport 'by.muna.moep.post.formula.model.expressions.FormulaIfModel'
+#javaImport 'by.muna.moep.post.formula.model.expressions.FormulaSwitchModel'
+#javaImport 'by.muna.moep.post.formula.model.expressions.cases.FormulaSwitchCaseModel'
+#javaImport 'by.muna.moep.post.formula.model.expressions.FormulaAssignmentModel'
+#javaImport 'by.muna.moep.post.formula.model.expressions.FormulaFunctionCallModel'
+#javaImport 'by.muna.moep.post.formula.model.expressions.FormulaBuiltInOperationModel'
+#javaImport 'by.muna.moep.post.formula.model.expressions.FormulaExpressionsModel'
+#javaImport 'by.muna.moep.post.formula.model.expressions.variables.FormulaBuiltInVariableModel'
+#javaImport 'by.muna.moep.post.formula.model.expressions.variables.FormulaExternalVariableModel'
+#javaImport 'by.muna.moep.post.formula.model.expressions.variables.FormulaUserVariableModel'
+
+start = WS? x:expression WS? {@ return x; @}
+
+expression =
+    (e #type 'IFormulaExpressionModel'):singleExpression
+    (es #type 'List<IFormulaExpressionModel>'):(WS? ';' WS? s:singleExpression {@
+        return s;
+    @})* {@
+        es.add(0, e);
+        return new FormulaExpressionsModel(es);
+    @}
+
+singleExpression =
+    assignment /
+    if /
+    switch /
+    builtInOperation /
+    simpleExpression
+
+builtInOperation =
+    (a #type 'IFormulaExpressionModel'):builtInOperation1 WS?
+    (t #type 'String'):('+' / '-' / '==' / '>' / '>=' / '<' / '<=' /
+        '&&' / '||' / 'xor')
+    WS? (b #type 'IFormulaExpressionModel'):builtInOperation {@
+        return new FormulaBuiltInOperationModel(
+            FormulaBuiltInOperationTypeModel.fromString(t),
+            Arrays.asList(a, b)
+        );
+    @} / builtInOperation1
+builtInOperation1 =
+    (a #type 'IFormulaExpressionModel'):builtInOperation2 WS?
+    (t #type 'String'):('*' / '/' / '%')
+    WS? (b #type 'IFormulaExpressionModel'):builtInOperation1 {@
+        return new FormulaBuiltInOperationModel(
+            FormulaBuiltInOperationTypeModel.fromString(t),
+            Arrays.asList(a, b)
+        );
+    @} / builtInOperation2
+builtInOperation2 =
+    (a #type 'IFormulaExpressionModel'):simpleExpression WS?
+    (t #type 'String'):'^'
+    WS? (b #type 'IFormulaExpressionModel'):simpleExpression {@
+        return new FormulaBuiltInOperationModel(
+            FormulaBuiltInOperationTypeModel.POW,
+            Arrays.asList(a, b)
+        );
+    @} / simpleExpression
+
+simpleExpression =
+    int /
+    string /
+    functionCall /
+    variable /
+    groupedExpression
+
+groupedExpression =
+    '(' x:expression ')' {@ return x; @}
+
+assignment =
+    (v #type 'FormulaUserVariableModel'):userVariable WS? '=' WS?
+    (e #type 'IFormulaExpressionModel'):singleExpression {@
+        return new FormulaAssignmentModel(v, e);
+    @}
+
+if = 'if' WS (cond #type 'IFormulaExpressionModel'):expression WS 'then' WS
+    (thenExpr #type 'IFormulaExpressionModel'):expression
+    (maybeElse #type 'List<IFormulaExpressionModel>'):(WS 'else' WS e:singleExpression {@
+        return e;
+    @})? {@
+        return new FormulaIfModel(
+            cond, thenExpr,
+            !maybeElse.isEmpty() ? maybeElse.get(0) : null
+        );
+    @}
+
+switch =
+    'switch' WS (m #type 'IFormulaExpressionModel'):expression WS? ':' WS?
+    cs:(switchCases (WS s:switchDefault {@ return s; @})? /
+     switchDefault) {@
+        if (cs instanceof IFormulaExpressionModel) {
+            // useless switch with only default case, lol
+            return cs;
+        } else {
+            List<Object> casesObj = (List<Object>) cs;
+            List<FormulaSwitchCaseModel> cases = (List<FormulaSwitchCaseModel>) casesObj.get(0);
+
+            List<IFormulaExpressionModel> maybeDefault =
+                (List<IFormulaExpressionModel>) casesObj.get(1);
+
+            return new FormulaSwitchModel(
+                m, cases,
+                !maybeDefault.isEmpty() ? maybeDefault.get(0) : null
+            );
+        }
+    @}
+
+switchCases =
+    (c #type 'FormulaSwitchCaseModel'):switchCase
+    (cs #type 'List<FormulaSwitchCaseModel>'):(WS sc:switchCase {@ return sc; @})* {@
+        cs.add(0, c);
+        return cs;
+    @}
+switchCase =
+    'case' WS (caseE #type 'IFormulaExpressionModel'):singleExpression WS? ':'
+    WS? (e #type 'IFormulaExpressionModel'):expression {@
+        return new FormulaSwitchCaseModel(caseE, e);
+    @}
+switchDefault = 'default' WS? ':' WS? (e #type 'IFormulaExpressionModel'):singleExpression {@
+    return e;
+@}
+
+functionCall =
+    (calling #type 'IFormulaExpressionModel'):(variable / groupedExpression) WS?
+    '(' WS? (args #type 'List<List<IFormulaExpressionModel>>'):functionArgs? WS? ')' {@
+        return new FormulaFunctionCallModel(
+            calling, !args.isEmpty() ? args.get(0) : Arrays.asList()
+        );
+    @}
+
+functionArgs = (e #type 'IFormulaExpressionModel'):singleExpression
+    (l #type 'List<IFormulaExpressionModel>'):(WS? ',' WS?
+        (e #type 'IFormulaExpressionModel'):singleExpression {@
+            return e;
+        @})* {@
+    l.add(0, e);
+    return l;
+    @}
+
+variable =
+    userVariable /
+    external /
+    builtIn
+
+userVariable = '$' (name #type 'String'):NAME {@ return new FormulaUserVariableModel(name); @}
+builtIn = (name #type 'String'):NAME {@ return new FormulaBuiltInVariableModel(name); @}
+external = '#' (name #type 'String'):NAME {@ return new FormulaExternalVariableModel(name); @}
+
+int = (x #type 'Integer'):INT {@ return new FormulaIntModel(x); @}
+string = (x #type 'String'):STRING {@ return new FormulaStringModel(x); @}
+
+KEYWORD = 'if' / 'then' / 'else' / 'switch' / 'case' / 'xor'
+
+NAME = ! KEYWORD (a #type 'Character'):[a-zA-Z] (s #type 'List<Character>'):[a-zA-Z0-9_]* {@
+    StringBuilder sb = new StringBuilder();
+    sb.append(a); for (char c : s) sb.append(c);
+    return sb.toString();
+@}
+
+INT = (m #type 'List<String>'):'-'? (a #type 'Integer'):UINT {@
+    return (m.isEmpty() ? 1 : -1) * a;
+@}
+UINT = (a #type 'Character'):[1-9] (chars #type 'List<Character>'):[0-9]* {@
+    StringBuilder sb = new StringBuilder();
+    sb.append(a); for (char c : chars) sb.append(c);
+    return Integer.parseInt(sb.toString());
+@} / '0' {@ return 0; @}
+
+STRING =
+    '\'' (s #type 'List<Character>'):STRING_CHAR* '\'' {@
+        StringBuilder sb = new StringBuilder();
+        for (char c : s) sb.append(c);
+        return sb.toString();
+    @}
+STRING_CHAR = ESCAPED_CHAR / [^']
+
+ESCAPED_CHAR =
+    '\\' (x #type 'Character'):. {@
+        switch (x) {
+        case 'r': return '\r';
+        case 'n': return '\n';
+        case 't': return '\t';
+        default: return x;
+        }
+    @}
+
+
+WS = [ \t\r\n]+
