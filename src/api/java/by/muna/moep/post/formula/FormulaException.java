@@ -5,6 +5,10 @@ public class FormulaException extends Exception {
         super();
     }
 
+    public FormulaException(Throwable cause) {
+        super(cause);
+    }
+
     public FormulaException(String message) {
         super(message);
     }
