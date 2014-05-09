@@ -1,0 +1,28 @@
+{
+    "types": {
+        "1": {
+            "name": "Первый тип",
+            "parameters": [
+                {"slug": "arg1", "name": "Первый параметр", "type": "int"},
+                {"slug": "arg2", "name": "Второй параметр", "type": "uint"},
+                {"slug": "arg3", "name": "Третий параметр", "type": "float"}
+            ],
+            "formula": "example"
+        },
+        "2": {
+            "name": "Второй тип",
+            "parameters": [
+                {"slug": "some", "name": "Какой-то параметр", "type": "int"},
+                {"slug": "sw", "name": "Лицо", "type": "switch", "cases": [
+                    {"slug": "natural", "name": "Физическое лицо"},
+                    {"slug": "legal", "name": "Юридическое лицо"}
+                ]}
+            ],
+            "formula": "other_formula"
+        }
+    },
+    "formulas": {
+        "example": "(2 * $arg3 + 3 * $arg1) * $arg2",
+        "other_formula": "$some * 0 + 42"
+    }
+}
