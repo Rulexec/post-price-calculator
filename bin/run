@@ -5,5 +5,5 @@
 
     cd "$DIR/.."
 
-    java -cp 'lib/*:jars/*' by.muna.post.Main
+    java -cp 'lib/*:jars/*' by.muna.moep.post.Main
 )
