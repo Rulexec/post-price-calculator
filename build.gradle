@@ -1,0 +1,14 @@
+task createZip(type: Zip) {
+    archiveName 'app.zip'
+    destinationDir buildDir
+
+    from ('.') {
+        include 'bin/**/*'
+        include 'lib/**/*'
+        include 'jars/**/*'
+        include 'db/**/*'
+        include 'docs/**/*'
+
+        exclude '**/.gitignore'
+    }
+}
