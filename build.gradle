@@ -28,6 +28,9 @@ sourceSets {
 
 jar {
     baseName 'post'
+    manifest {
+        attributes 'Main-Class': 'by.muna.moep.post.Main'
+    }
 }
 
 
