@@ -89,7 +89,7 @@ public class BasicJSONDbTests {
                 for (IPostParameter parameter : type.getParameters()) {
                     NameAndType nameAndType = expected.remove(parameter.getSlug());
 
-                    Assert.assertEquals(nameAndType.name, parameter.getSlug());
+                    Assert.assertEquals(nameAndType.name, parameter.getName());
                     Assert.assertEquals(nameAndType.type, parameter.getData().getParameterType());
                 }
 
@@ -108,7 +108,7 @@ public class BasicJSONDbTests {
                     case "some": {
                         NameAndType nameAndType = expected.remove(parameter.getSlug());
 
-                        Assert.assertEquals(nameAndType.name, parameter.getSlug());
+                        Assert.assertEquals(nameAndType.name, parameter.getName());
                         Assert.assertEquals(nameAndType.type, parameter.getData().getParameterType());
                     } break;
                     case "sw": {
