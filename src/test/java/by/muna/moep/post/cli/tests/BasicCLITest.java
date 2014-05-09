@@ -5,6 +5,7 @@ import by.muna.moep.post.PostException;
 import by.muna.moep.post.cli.BadPostCLICommandException;
 import by.muna.moep.post.cli.IPostCLI;
 import by.muna.moep.post.cli.PostCLI;
+import by.muna.moep.post.cli.tests.factories.PostCLIFactory;
 import by.muna.moep.post.data.IPostParameter;
 import by.muna.moep.post.data.IPostType;
 import by.muna.moep.post.data.IPostTypeFull;
@@ -22,13 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 public class BasicCLITest {
-    private IPostCLI createPostCLI() {
-        return new PostCLI(this.post);
-    }
-
     @Test
     public void basicCLITest() throws BadPostCLICommandException {
-        IPostCLI cli = this.createPostCLI();
+        IPostCLI cli = PostCLIFactory.createPostCLI(this.post);
 
         String s = cli.init();
 
