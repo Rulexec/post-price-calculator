@@ -1,11 +1,9 @@
 package by.muna.moep.post;
 
-import by.muna.moep.post.cli.tests.BasicCLITest;
 import by.muna.moep.post.data.IPostParameter;
 import by.muna.moep.post.data.IPostType;
 import by.muna.moep.post.data.parameters.IPostParameterCase;
 import by.muna.moep.post.data.parameters.IPostParameterData;
-import by.muna.moep.post.data.parameters.IPostParameterSwitch;
 import by.muna.moep.post.data.parameters.PostParameterDataSimple;
 import by.muna.moep.post.data.parameters.PostParameterDataSwitch;
 import by.muna.moep.post.data.parameters.PostParameterType;
@@ -26,9 +24,11 @@ import java.util.Map;
 public class BasicPostTests {
     @Test
     public void basicTest() throws Exception {
-        IPost post = PostFactory.createPost(BasicPostTests.DB, FormulaParserFactory.createFormulaParser());
+        IPost post = PostFactory.createPost(
+            BasicPostTests.DB, FormulaParserFactory::createFormulaParser
+        );
 
-        Assert.assertEquals(0, post.getPostTypes().size());
+        Assert.assertEquals(1, post.getPostTypes().size());
 
         this.assertType(post.getPostTypes().get(0));
         this.assertType(post.getPostType(1));
@@ -39,9 +39,9 @@ public class BasicPostTests {
         parametersAdd.put("b", "3");
 
         Map<String, String> parametersMult = new HashMap<>();
-        parametersAdd.put("type", "'mult'");
-        parametersAdd.put("a", "2");
-        parametersAdd.put("b", "3");
+        parametersMult.put("type", "'mult'");
+        parametersMult.put("a", "2");
+        parametersMult.put("b", "3");
 
         Assert.assertEquals(5, post.calculate(1, parametersAdd));
         Assert.assertEquals(6, post.calculate(1, parametersMult));
@@ -59,7 +59,7 @@ public class BasicPostTests {
             }
 
             @Override
-            public List<IPostParameter> getParameters() throws PostDatabaseException {
+            public List<IPostParameter> getParameters() {
                 class PostParameter implements IPostParameter {
                     private String name, slug;
                     private IPostParameterData data;
