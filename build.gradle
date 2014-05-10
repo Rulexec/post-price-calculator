@@ -45,6 +45,11 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
+task copyDeps(type: Copy) {
+  from configurations.runtime
+  into new File(buildDir, 'deps_lib')
+}
+
 task createBuildFolder << {
     if (!buildDir.exists()) {
         buildDir.mkdir()
