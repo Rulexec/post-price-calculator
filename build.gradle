@@ -2,8 +2,11 @@ task createZip(type: Zip) {
     archiveName 'app.zip'
     destinationDir buildDir
 
+    from ('bin') {
+        include '**/*'
+        fileMode 0775
+    }
     from ('.') {
-        include 'bin/**/*'
         include 'lib/**/*'
         include 'jars/**/*'
         include 'db/**/*'
