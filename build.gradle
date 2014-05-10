@@ -3,6 +3,8 @@ task createZip(type: Zip) {
     destinationDir buildDir
 
     from ('bin') {
+        into 'bin'
+
         include '**/*'
         fileMode 0775
     }
