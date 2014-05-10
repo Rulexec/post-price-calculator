@@ -1,3 +1,5 @@
+apply plugin: 'base'
+
 task createZip(type: Zip) {
     archiveName 'app.zip'
     destinationDir buildDir
