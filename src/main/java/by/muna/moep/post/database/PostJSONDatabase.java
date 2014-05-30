@@ -126,7 +126,7 @@ public class PostJSONDatabase implements IPostDatabase {
                 }
 
                 @Override
-                public List<IPostParameter> getParameters() throws PostDatabaseException {
+                public List<IPostParameter> getParameters() {
                     return parameters;
                 }
 
