@@ -1,7 +1,10 @@
 apply plugin: 'java'
 
-sourceCompatibility = 1.8
 version = '0.0.1'
+sourceCompatibility = 1.8
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
 
 sourceSets {
     main {
@@ -23,6 +26,14 @@ sourceSets {
     }
 }
 
+jar {
+    baseName 'post'
+    manifest {
+        attributes 'Main-Class': 'by.muna.moep.post.Main'
+    }
+}
+
+
 repositories {
     maven {
         url 'http://exitprise.muna.by:8081/content/repositories/muna'
@@ -33,6 +44,35 @@ repositories {
 
 dependencies {
     compile group: 'by.muna.peg', name: 'cats-peg', version: '[0.2.0,1.0.0)'
+    compile group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.13'
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task copyDeps(type: Copy) {
+  from configurations.runtime
+  into new File(buildDir, 'deps_lib')
+}
+
+task createBuildFolder << {
+    if (!buildDir.exists()) {
+        buildDir.mkdir()
+    }
+}
+task createVersionFile << {
+    File versionFile = new File(buildDir, 'VERSION')
+    PrintWriter out = new PrintWriter(versionFile)
+    out.println(version)
+    out.close()
+}
+task createArchiveNameFile << {
+    File archiveNameFile = new File(buildDir, 'JAR_NAME')
+    PrintWriter out = new PrintWriter(archiveNameFile)
+    out.println(jar.archiveName)
+    out.close()
+}
+task createInfoFiles << {
+    tasks.createBuildFolder.execute()
+    tasks.createVersionFile.execute()
+    tasks.createArchiveNameFile.execute()
 }

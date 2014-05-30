@@ -29,6 +29,21 @@ public class FormulaIntValue implements IFormulaValue {
     }
 
     @Override
+    public IFormulaValue multiply(IFormulaValue o) throws FormulaRuntimeException {
+        if (o instanceof FormulaIntValue) {
+            return new FormulaIntValue(
+                this.value * ((FormulaIntValue) o).value
+            );
+        } else if (o instanceof FormulaFloatValue) {
+            return new FormulaFloatValue(
+                this.value * ((FormulaFloatValue) o).getValue()
+            );
+        } else {
+            throw new FormulaRuntimeException("add int not applicable to: " + o);
+        }
+    }
+
+    @Override
     public IFormulaValue pow(IFormulaValue o) throws FormulaRuntimeException {
         if (o instanceof FormulaIntValue) {
             return new FormulaIntValue(
