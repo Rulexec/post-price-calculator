@@ -57,4 +57,32 @@ public class BasicFormulaTest {
 
         Assert.assertEquals(42.1172126333165, r, 0.0000005);
     }
+
+    @Test
+    public void addition() throws Exception {
+        IFormulaParser parser = FormulaParserFactory.createFormulaParser();
+
+        parser.feed("$a + $b");
+
+        IFormulaBuilder formulaBuilder = parser.end();
+
+        Set<String> requiredArgs = formulaBuilder.requiredArgs();
+
+        Assert.assertEquals(0, formulaBuilder.requiredExternals().size());
+        Assert.assertEquals(0, formulaBuilder.requiredBuiltin().size());
+        Assert.assertEquals(2, requiredArgs.size());
+
+        Assert.assertTrue(requiredArgs.contains("a"));
+        Assert.assertTrue(requiredArgs.contains("b"));
+
+        IFormula formula = formulaBuilder.buildFormula();
+
+        Map<String, IFormulaValue> args = new HashMap<>(2);
+        args.put("a", new FormulaFloatValue(3.14));
+        args.put("b", new FormulaIntValue(42));
+
+        double r = ((FormulaFloatValue) formula.eval(args)).getValue();
+
+        Assert.assertEquals(45.14, r, 0.0000005);
+    }
 }
