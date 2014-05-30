@@ -3,13 +3,13 @@ package by.muna.moep.post.formula.types;
 import by.muna.moep.post.formula.FormulaRuntimeException;
 
 public class FormulaIntValue implements IFormulaValue {
-    private int value;
+    private long value;
 
-    public FormulaIntValue(int value) {
+    public FormulaIntValue(long value) {
         this.value = value;
     }
 
-    public int getValue() {
+    public long getValue() {
         return this.value;
     }
 
@@ -47,7 +47,7 @@ public class FormulaIntValue implements IFormulaValue {
     public IFormulaValue pow(IFormulaValue o) throws FormulaRuntimeException {
         if (o instanceof FormulaIntValue) {
             return new FormulaIntValue(
-                (int) Math.pow(this.value, ((FormulaIntValue) o).value)
+                (long) Math.pow(this.value, ((FormulaIntValue) o).value)
             );
         } else if (o instanceof FormulaFloatValue) {
             return new FormulaFloatValue(

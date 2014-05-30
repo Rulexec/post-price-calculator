@@ -22,7 +22,7 @@ public class SqrtFormula implements IFormula {
 
         switch (value.getValueType()) {
         case INT:
-            return new FormulaIntValue((int) Math.sqrt(((FormulaIntValue) value).getValue()));
+            return new FormulaIntValue((long) Math.sqrt(((FormulaIntValue) value).getValue()));
         case FLOAT:
             return new FormulaFloatValue(Math.sqrt(((FormulaFloatValue) value).getValue()));
         default:
