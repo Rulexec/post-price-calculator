@@ -86,10 +86,10 @@ public class Post implements IPost {
                 }
             } break;
             case INT:
-                formulaValue = new FormulaIntValue(Integer.parseInt(value));
+                formulaValue = new FormulaIntValue(Long.parseLong(value));
                 break;
             case UINT: {
-                int v = Integer.parseInt(value);
+                long v = Long.parseLong(value);
                 if (v < 0) throw new PostException("uint");
                 formulaValue = new FormulaIntValue(v);
             } break;

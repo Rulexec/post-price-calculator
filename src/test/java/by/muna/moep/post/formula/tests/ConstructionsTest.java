@@ -53,7 +53,7 @@ public class ConstructionsTest {
     }
 
     private void testIntExpression(
-        String expr, Map<String, IFormulaValue> args, int expected) throws FormulaException
+        String expr, Map<String, IFormulaValue> args, long expected) throws FormulaException
     {
         IFormulaValue result = this.evalFormula(expr, args);
 
